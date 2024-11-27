@@ -39,6 +39,7 @@ print_words() and print_top().
 
 import sys
 
+
 # +++your code here+++
 # Define print_words(filename) and print_top(filename) functions.
 # You could write a helper utility function that reads a file
@@ -50,19 +51,50 @@ import sys
 # This basic command line argument parsing code is provided and
 # calls the print_words() and print_top() functions which you must define.
 def main():
-  if len(sys.argv) != 3:
-    print('usage: ./wordcount.py {--count | --topcount} file')
-    sys.exit(1)
+    if len(sys.argv) != 3:
+        print('usage: ./wordcount.py {--count | --topcount} file')
+        sys.exit(1)
 
-  option = sys.argv[1]
-  filename = sys.argv[2]
-  if option == '--count':
-    print_words(filename)
-  elif option == '--topcount':
-    print_top(filename)
-  else:
-    print('unknown option: ' + option)
-    sys.exit(1)
+    option = sys.argv[1]
+    filename = sys.argv[2]
+    if option == '--count':
+        print_words(filename)
+    elif option == '--topcount':
+        print_top(filename)
+    else:
+        print('unknown option: ' + option)
+        sys.exit(1)
+
+
+def print_words(filename):
+    input_file = open(filename, 'r')
+    words = {}
+
+    for line in input_file:
+        for word in line.split():
+            key = word.lower()
+            if not key in words:
+                words[key] = 1
+            else:
+                words[key] = words[key] + 1
+
+    input_file.close()
+    return words
+
+def get_count(word_count_tuple):
+    """Returns the count from a dict word/count tuple  -- used for custom sort."""
+    return word_count_tuple[1]
+
+def print_top(filename):
+    words_dict = print_words(filename)
+    # Each item is a (word, count) tuple.
+    # Sort them so the big counts are first using key=get_count() to extract count.
+    items = sorted(words_dict.items(), key=get_count, reverse=True)
+
+    # Print the first 20
+    for item in items[:20]:
+        print(item[0], item[1])
+
 
 if __name__ == '__main__':
-  main()
+    main()
